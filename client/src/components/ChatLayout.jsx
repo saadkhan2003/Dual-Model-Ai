@@ -12,7 +12,7 @@ const ChatLayout = () => {
   // Loading state while providers initialize
   if (!thinkingApiValid && !codingApiValid) {
     return (
-      <div className="flex flex-col h-full items-center justify-center bg-white dark:bg-gray-900 p-4">
+      <div className="flex flex-col h-full items-center justify-center bg-white dark:bg-gray-900 p-4 transition-colors duration-200">
         <div className="max-w-3xl w-full space-y-8 text-center">
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
             Welcome to Dual-AI Chat
@@ -35,7 +35,7 @@ const ChatLayout = () => {
   }
 
   return (
-    <div className="relative flex flex-col h-full bg-white dark:bg-gray-900">
+    <div className="relative flex flex-col h-full bg-white dark:bg-gray-900 transition-colors duration-200">
       {/* Main scrollable content */}
       <div className="flex-1 overflow-y-auto">
         <div className="relative min-h-full">
@@ -59,7 +59,7 @@ const ChatLayout = () => {
       </div>
 
       {/* Fixed input container */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-900">
+      <div className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
         <div className="w-full max-w-3xl mx-auto px-4 pb-8">
           <ChatInput />
         </div>

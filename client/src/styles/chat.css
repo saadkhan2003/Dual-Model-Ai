@@ -16,14 +16,14 @@
 
 /* Code block styling */
 .code-block {
-  background: #2d2d2d;
+  @apply bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700;
   border-radius: 12px;
   overflow: hidden;
   margin: 1rem 0;
 }
 
 .code-header {
-  background: rgba(0, 0, 0, 0.3);
+  @apply bg-gray-100 dark:bg-black/30 border-b border-gray-200 dark:border-gray-700;
   padding: 0.5rem 1rem;
   display: flex;
   justify-content: space-between;
@@ -33,7 +33,7 @@
 .language-tag {
   font-family: 'Fira Code', monospace;
   font-size: 0.75rem;
-  color: #8b949e;
+  @apply text-gray-500 dark:text-gray-400;
 }
 
 /* Code block line numbers */
@@ -75,11 +75,11 @@
 }
 
 .message-user {
-  background-color: #444654;
+  @apply bg-gray-50 dark:bg-[#444654];
 }
 
 .message-ai {
-  background-color: #3e3f4b;
+  @apply bg-blue-50 dark:bg-[#3e3f4b];
 }
 
 /* Avatar styling */
@@ -93,11 +93,11 @@
 }
 
 .avatar-user {
-  background-color: rgb(226 232 240);
+  @apply bg-gray-200 dark:bg-gray-700;
 }
 
 .avatar-ai {
-  background-color: rgba(20, 184, 166, 0.2);
+  @apply bg-blue-100 dark:bg-teal-500/20;
 }
 
 /* Loading dots animation */
@@ -105,7 +105,7 @@
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 9999px;
-  background-color: #14b8a6;
+  @apply bg-blue-500 dark:bg-teal-500;
   display: inline-block;
   margin: 0 0.125rem;
   animation: bounce 0.6s infinite;
@@ -147,7 +147,7 @@
 /* Timestamp */
 .message-timestamp {
   font-size: 0.75rem;
-  color: #8b949e;
+  @apply text-gray-500 dark:text-gray-400;
   text-align: right;
   margin-top: 0.5rem;
 }
@@ -171,17 +171,17 @@ pre::-webkit-scrollbar {
 }
 
 pre::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
+  @apply bg-gray-200 dark:bg-black/20;
   border-radius: 4px;
 }
 
 pre::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  @apply bg-gray-400/50 dark:bg-white/10;
   border-radius: 4px;
 }
 
 pre::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  @apply bg-gray-400/70 dark:bg-white/20;
 }
 
 /* Ensure code line numbers are properly spaced */

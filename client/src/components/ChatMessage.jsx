@@ -75,7 +75,19 @@ const ChatMessage = ({ message }) => {
             <div className="p-4">
               <SyntaxHighlighter
                 language={lang}
-                style={vscDarkPlus}
+                style={{
+                  ...vscDarkPlus,
+                  'pre[class*="language-"]': {
+                    ...vscDarkPlus['pre[class*="language-"]'],
+                    background: 'transparent',
+                    color: 'var(--text-code)',
+                  },
+                  'code[class*="language-"]': {
+                    ...vscDarkPlus['code[class*="language-"]'],
+                    background: 'transparent',
+                    color: 'var(--text-code)',
+                  }
+                }}
                 showLineNumbers={true}
                 startingLineNumber={1}
                 customStyle={{
@@ -103,7 +115,7 @@ const ChatMessage = ({ message }) => {
       }
 
       return (
-        <code className="px-1.5 py-0.5 mx-0.5 rounded bg-[#2d2d2d] font-mono text-[0.9em]">
+        <code className="px-1.5 py-0.5 mx-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-mono text-[0.9em]">
           {children}
         </code>
       );
@@ -132,7 +144,7 @@ const ChatMessage = ({ message }) => {
           {/* Content */}
           <div className="flex-1 min-w-0">
             {message.status === 'error' ? (
-              <div className="text-red-400 bg-red-500/10 p-4 rounded-xl">
+              <div className="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 p-4 rounded-xl border border-red-100 dark:border-red-500/20">
                 Error: {message.error}
               </div>
             ) : message.status === 'generating' ? (
@@ -159,7 +171,7 @@ const ChatMessage = ({ message }) => {
                     <button
                       onClick={() => copyToClipboard(message.content)}
                       className={`action-button ${
-                        copiedMessage ? 'bg-green-500/20 text-green-400' : 'bg-[#2d2d2d] text-gray-300'
+                        copiedMessage ? 'bg-green-50 dark:bg-green-500/20 text-green-600 dark:text-green-400' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                       }`}
                     >
                       {copiedMessage ? (
@@ -181,7 +193,7 @@ const ChatMessage = ({ message }) => {
                     
                     <button
                       onClick={handleRegenerate}
-                      className="action-button bg-[#2d2d2d] text-gray-300"
+                      className="action-button bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                     >
                       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -199,7 +211,7 @@ const ChatMessage = ({ message }) => {
       {message.status === 'generating' && (
         <button
           onClick={() => stopGeneration()}
-          className="absolute right-4 top-4 p-2 text-red-400 hover:text-red-300 rounded-lg hover:bg-black/30"
+          className="absolute right-4 top-4 p-2 text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/20"
           title="Stop generating"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

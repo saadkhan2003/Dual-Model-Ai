@@ -9,8 +9,39 @@
 :root {
   color-scheme: light dark;
   --font-mono: 'Fira Code', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --bg-code: #2d2d2d;
-  --text-code: #f8f8f2;
+  
+  /* Light theme */
+  --bg-primary-light: #ffffff;
+  --text-primary-light: #1a1a1a;
+  --bg-secondary-light: #f5f5f5;
+  --text-secondary-light: #4a4a4a;
+  --border-light: #e2e2e2;
+  --bg-code-light: #f8f8f8;
+  --text-code-light: #2d2d2d;
+
+  /* Dark theme */
+  --bg-primary-dark: #1e1e1e;
+  --text-primary-dark: #e1e1e1;
+  --bg-secondary-dark: #2d2d2d;
+  --text-secondary-dark: #b4b4b4;
+  --border-dark: #404040;
+  --bg-code-dark: #2d2d2d;
+  --text-code-dark: #f8f8f2;
+
+  /* Default to light theme */
+  --bg-code: var(--bg-code-light);
+  --text-code: var(--text-code-light);
+}
+
+/* Dark mode overrides */
+.dark {
+  --bg-code: var(--bg-code-dark);
+  --text-code: var(--text-code-dark);
+}
+
+/* Base styles */
+html {
+  transition: background-color 0.2s ease-in-out;
 }
 
 body {
@@ -21,6 +52,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   @apply bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-[#e1e1e1];
+}
+
+/* Theme transitions */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
 }
 
 /* Code block styling */
@@ -62,12 +100,12 @@ pre::-webkit-scrollbar-track {
 }
 
 pre::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  @apply bg-gray-400/20 dark:bg-white/10;
   border-radius: 4px;
 }
 
 pre::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  @apply bg-gray-400/30 dark:bg-white/20;
 }
 
 /* Smooth scrolling */
@@ -87,8 +125,7 @@ pre code {
 
 /* Dark mode selection color */
 ::selection {
-  background: rgba(255, 255, 255, 0.1);
-  color: inherit;
+  @apply bg-blue-100 dark:bg-blue-900/30 text-current;
 }
 
 /* Ensure copy button is always visible on touch devices */

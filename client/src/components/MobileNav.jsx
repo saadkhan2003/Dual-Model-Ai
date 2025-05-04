@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useChat } from '../context/ChatContext';
-import { useTheme } from '../context/ThemeContext';
 import { useModels } from '../context/ModelContext';
-import { getProviders } from '../services/api';
 import ThemeToggle from './ThemeToggle';
 import { ModelSection } from './Sidebar';
 
 const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { darkMode } = useTheme();
   const { startNewChat } = useChat();
   const {
     thinkingProvider,
@@ -159,7 +156,9 @@ const MobileNav = () => {
 
           {/* Footer */}
           <div className="mt-auto border-t border-gray-200 dark:border-gray-700">
-            <ThemeToggle />
+            <div className="max-w-xs mx-auto">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </div>

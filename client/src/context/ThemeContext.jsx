@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useCallback } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const ThemeContext = createContext();
@@ -17,20 +17,32 @@ export const ThemeProvider = ({ children }) => {
     }
   }, [darkMode]);
 
-  // Listen for system theme changes
+  // Listen for system theme changes and keyboard shortcut
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e) => {
       setDarkMode(e.matches);
     };
 
+    const handleKeyPress = (e) => {
+      if (e.ctrlKey && e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        setDarkMode(prev => !prev);
+      }
+    };
+
     mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    document.addEventListener('keydown', handleKeyPress);
+    
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+      document.removeEventListener('keydown', handleKeyPress);
+    };
   }, [setDarkMode]);
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
+  const toggleDarkMode = useCallback(() => {
+    setDarkMode(prev => !prev);
+  }, [setDarkMode]);
 
   const value = {
     darkMode,
