@@ -9,13 +9,22 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-netlify-app.netlify.app']  // Update with your Netlify URL
-    : ['http://localhost:3000'],
-  credentials: true
-}));
+// CORS configuration
+const corsOptions = {
+  origin: [
+    'https://dualaimodel.netlify.app',
+    'http://localhost:3000'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
+// Pre-flight requests
+app.options('*', cors(corsOptions));
 
 app.use(bodyParser.json());
 
@@ -26,8 +35,26 @@ const checkApiKey = (req, res, next) => {
     return res.status(401).json({ error: 'API key is required' });
   }
   // Add your API key validation logic here
-  next();
+  if (apiKey === process.env.API_KEY) {
+    next();
+  } else {
+    res.status(401).json({ error: 'Invalid API key' });
+  }
 };
+
+// Validate API key endpoint
+app.post('/validate-key', cors(corsOptions), (req, res) => {
+  const apiKey = req.headers['x-api-key'];
+  if (!apiKey) {
+    return res.status(401).json({ error: 'API key is required' });
+  }
+  
+  if (apiKey === process.env.API_KEY) {
+    res.json({ valid: true });
+  } else {
+    res.status(401).json({ error: 'Invalid API key' });
+  }
+});
 
 // Basic health check endpoint
 app.get('/', (req, res) => {
@@ -68,4 +95,5 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   console.log('Environment:', process.env.NODE_ENV);
+  console.log('Allowed origins:', corsOptions.origin);
 });
