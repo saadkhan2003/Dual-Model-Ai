@@ -1,20 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { useChat } from '../context/ChatContext';
 import { useTheme } from '../context/ThemeContext';
+import { useModels } from '../context/ModelContext';
+import { getProviders } from '../services/api';
+import ThemeToggle from './ThemeToggle';
 
 const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { darkMode, toggleTheme } = useTheme();
+  const { darkMode } = useTheme();
+  const { startNewChat } = useChat();
   const {
-    savedChats,
-    activeChat,
-    loadChat,
-    startNewChat,
-    deleteChat,
-    exportChat
-  } = useChat();
+    thinkingProvider,
+    setThinkingProvider,
+    thinkingModel,
+    setThinkingModel,
+    thinkingApiKey,
+    setThinkingApiKey,
+    thinkingModels,
+    thinkingApiValid,
+    thinkingError,
+    loadingThinkingModels,
+    
+    codingProvider,
+    setCodingProvider,
+    codingModel,
+    setCodingModel,
+    codingApiKey,
+    setCodingApiKey,
+    codingModels,
+    codingApiValid,
+    codingError,
+    loadingCodingModels,
+  } = useModels();
 
-  const [showExportMenu, setShowExportMenu] = useState(false);
+  // Search states
+  const [thinkingSearch, setThinkingSearch] = useState('');
+  const [codingSearch, setCodingSearch] = useState('');
+  const [showThinkingSearch, setShowThinkingSearch] = useState(false);
+  const [showCodingSearch, setShowCodingSearch] = useState(false);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -28,16 +51,17 @@ const MobileNav = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
-  // Close menu when route changes
+  // Close menu when scrolling
   useEffect(() => {
-    setIsOpen(false);
-  }, [activeChat]);
+    const handleScroll = () => {
+      if (isOpen) {
+        setIsOpen(false);
+      }
+    };
 
-  const handleExport = (format) => {
-    exportChat(format);
-    setShowExportMenu(false);
-    setIsOpen(false);
-  };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isOpen]);
 
   return (
     <>
@@ -58,10 +82,13 @@ const MobileNav = () => {
 
       {/* Mobile navigation overlay */}
       <div className={`lg:hidden fixed inset-0 z-40 ${isOpen ? 'block' : 'hidden'}`}>
-        <div className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" />
+        <div
+          className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm"
+          onClick={() => setIsOpen(false)}
+        />
         
         {/* Navigation panel */}
-        <div className="mobile-nav absolute left-0 top-0 bottom-0 w-80 bg-white dark:bg-gray-800 shadow-xl flex flex-col">
+        <div className={`mobile-nav fixed left-0 top-0 bottom-0 w-80 bg-white dark:bg-gray-800 shadow-xl flex flex-col transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           {/* Header */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
@@ -72,8 +99,8 @@ const MobileNav = () => {
             </h2>
           </div>
 
-          {/* Actions */}
-          <div className="p-4 space-y-2">
+          {/* New Chat Button */}
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <button
               onClick={() => {
                 startNewChat();
@@ -86,87 +113,88 @@ const MobileNav = () => {
               </svg>
               New Chat
             </button>
-
-            <div className="relative">
-              <button
-                onClick={() => setShowExportMenu(!showExportMenu)}
-                className="w-full flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white"
-              >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                </svg>
-                Export Chat
-              </button>
-
-              {showExportMenu && (
-                <div className="absolute left-0 right-0 mt-2 py-2 bg-white dark:bg-gray-700 rounded-lg shadow-xl">
-                  {['text', 'markdown', 'html'].map((format) => (
-                    <button
-                      key={format}
-                      onClick={() => handleExport(format)}
-                      className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-white"
-                    >
-                      Export as {format.toUpperCase()}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
 
-          {/* Chat list */}
-          <div className="flex-1 overflow-y-auto p-4">
-            <div className="space-y-2">
-              {savedChats.map((chat) => (
-                <div
-                  key={chat.id}
-                  className={`group flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                    chat.id === activeChat
-                      ? 'bg-gray-200 dark:bg-gray-700'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
+          {/* Model Configurations */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-6">
+            {/* Thinking Model */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+                Thinking Model
+              </h3>
+              
+              <div className="space-y-2">
+                <label className="block text-sm text-gray-700 dark:text-gray-300">
+                  Provider
+                </label>
+                <select
+                  value={thinkingProvider}
+                  onChange={(e) => setThinkingProvider(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2"
                 >
-                  <button
-                    onClick={() => loadChat(chat.id)}
-                    className="flex-1 text-left truncate"
-                  >
-                    Chat {new Date(parseInt(chat.id)).toLocaleDateString()}
-                  </button>
-                  <button
-                    onClick={() => deleteChat(chat.id)}
-                    className="hidden group-hover:block text-gray-500 hover:text-red-500"
-                  >
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                </div>
-              ))}
+                  {getProviders().map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm text-gray-700 dark:text-gray-300">
+                  API Key
+                </label>
+                <input
+                  type="password"
+                  value={thinkingApiKey}
+                  onChange={(e) => setThinkingApiKey(e.target.value)}
+                  placeholder={`Enter ${getProviders().find(p => p.id === thinkingProvider)?.name} API Key`}
+                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2"
+                />
+              </div>
+            </div>
+
+            {/* Coding Model */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+                Coding Model
+              </h3>
+              
+              <div className="space-y-2">
+                <label className="block text-sm text-gray-700 dark:text-gray-300">
+                  Provider
+                </label>
+                <select
+                  value={codingProvider}
+                  onChange={(e) => setCodingProvider(e.target.value)}
+                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2"
+                >
+                  {getProviders().map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm text-gray-700 dark:text-gray-300">
+                  API Key
+                </label>
+                <input
+                  type="password"
+                  value={codingApiKey}
+                  onChange={(e) => setCodingApiKey(e.target.value)}
+                  placeholder={`Enter ${getProviders().find(p => p.id === codingProvider)?.name} API Key`}
+                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2"
+                />
+              </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-            <button
-              onClick={toggleTheme}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-            >
-              {darkMode ? (
-                <>
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  Light Mode
-                </>
-              ) : (
-                <>
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                  </svg>
-                  Dark Mode
-                </>
-              )}
-            </button>
+          <div className="mt-auto border-t border-gray-200 dark:border-gray-700">
+            <ThemeToggle />
           </div>
         </div>
       </div>
