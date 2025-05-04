@@ -126,7 +126,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-Muhamamd Saad Khan
+Saad Khan
 
 ## 🙏 Acknowledgments
 
