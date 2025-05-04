@@ -84,13 +84,13 @@ export const sendRequest = async (prompt, model, provider, isThinking = false, a
   }
 };
 
-export const validateApiKey = async (provider, apiKey) => {
+export const validateApiKey = async (provider, providerApiKey) => {
   console.log('Validating API key:', { provider });
   
   try {
     const response = await api.post('/validate-key', {
-      provider,
-      apiKey
+      provider: provider,
+      apiKey: providerApiKey
     });
 
     console.log('Validation response:', response.data);
