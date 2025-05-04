@@ -4,7 +4,7 @@ import { useModels } from '../context/ModelContext';
 import ThemeToggle from './ThemeToggle';
 import { getProviders } from '../services/api';
 
-const ModelSection = ({ 
+export const ModelSection = ({
   title, 
   provider, 
   setProvider, 

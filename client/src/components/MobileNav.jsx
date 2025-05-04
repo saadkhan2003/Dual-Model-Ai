@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useModels } from '../context/ModelContext';
 import { getProviders } from '../services/api';
 import ThemeToggle from './ThemeToggle';
+import { ModelSection } from './Sidebar';
 
 const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -118,78 +119,42 @@ const MobileNav = () => {
           {/* Model Configurations */}
           <div className="flex-1 overflow-y-auto p-4 space-y-6">
             {/* Thinking Model */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-                Thinking Model
-              </h3>
-              
-              <div className="space-y-2">
-                <label className="block text-sm text-gray-700 dark:text-gray-300">
-                  Provider
-                </label>
-                <select
-                  value={thinkingProvider}
-                  onChange={(e) => setThinkingProvider(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2"
-                >
-                  {getProviders().map(p => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-sm text-gray-700 dark:text-gray-300">
-                  API Key
-                </label>
-                <input
-                  type="password"
-                  value={thinkingApiKey}
-                  onChange={(e) => setThinkingApiKey(e.target.value)}
-                  placeholder={`Enter ${getProviders().find(p => p.id === thinkingProvider)?.name} API Key`}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2"
-                />
-              </div>
-            </div>
+            <ModelSection
+              title="Thinking Model"
+              provider={thinkingProvider}
+              setProvider={setThinkingProvider}
+              apiKey={thinkingApiKey}
+              setApiKey={setThinkingApiKey}
+              model={thinkingModel}
+              setModel={setThinkingModel}
+              models={thinkingModels}
+              apiValid={thinkingApiValid}
+              error={thinkingError}
+              loading={loadingThinkingModels}
+              searchTerm={thinkingSearch}
+              setSearchTerm={setThinkingSearch}
+              showSearch={showThinkingSearch}
+              setShowSearch={setShowThinkingSearch}
+            />
 
             {/* Coding Model */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-                Coding Model
-              </h3>
-              
-              <div className="space-y-2">
-                <label className="block text-sm text-gray-700 dark:text-gray-300">
-                  Provider
-                </label>
-                <select
-                  value={codingProvider}
-                  onChange={(e) => setCodingProvider(e.target.value)}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2"
-                >
-                  {getProviders().map(p => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-sm text-gray-700 dark:text-gray-300">
-                  API Key
-                </label>
-                <input
-                  type="password"
-                  value={codingApiKey}
-                  onChange={(e) => setCodingApiKey(e.target.value)}
-                  placeholder={`Enter ${getProviders().find(p => p.id === codingProvider)?.name} API Key`}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white p-2"
-                />
-              </div>
-            </div>
+            <ModelSection
+              title="Coding Model"
+              provider={codingProvider}
+              setProvider={setCodingProvider}
+              apiKey={codingApiKey}
+              setApiKey={setCodingApiKey}
+              model={codingModel}
+              setModel={setCodingModel}
+              models={codingModels}
+              apiValid={codingApiValid}
+              error={codingError}
+              loading={loadingCodingModels}
+              searchTerm={codingSearch}
+              setSearchTerm={setCodingSearch}
+              showSearch={showCodingSearch}
+              setShowSearch={setShowCodingSearch}
+            />
           </div>
 
           {/* Footer */}
