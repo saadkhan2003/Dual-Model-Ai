@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+const SERVER_API_KEY = 'dual_ai_chat_secret_key_2024';
+
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001'
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
+  headers: {
+    'x-api-key': SERVER_API_KEY
+  }
 });
 
 // Provider configurations

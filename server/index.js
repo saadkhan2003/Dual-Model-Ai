@@ -13,7 +13,8 @@ const port = process.env.PORT || 5000;
 const corsOptions = {
   origin: [
     'https://dualaimodel.netlify.app',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'http://localhost:3001'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key'],
